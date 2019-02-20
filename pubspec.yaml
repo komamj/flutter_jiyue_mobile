@@ -1,0 +1,32 @@
+name: jiyue_mobile
+description: A new mobile application to request a song.
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.1.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: 0.1.2
+
+  dio: 2.0.20
+  web_socket_channel: 1.0.9
+
+  shared_preferences: 0.5.1+1
+
+  provide: 1.0.2
+  # sqflite: 1.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  assets:
+  - images/ic_launcher.png
+  - images/bg_splash.png
+  - images/ic_avatar.png
