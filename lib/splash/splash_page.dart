@@ -45,6 +45,7 @@ class SplashPageState extends State<SplashPage>
   Widget build(BuildContext context) {
     return WillPopScope(
       child: Scaffold(
+        resizeToAvoidBottomPadding: false,
         body: Stack(
           alignment: AlignmentDirectional.bottomCenter,
           children: <Widget>[

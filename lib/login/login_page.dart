@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:jiyue_mobile/data/source/repository.dart';
+import 'package:jiyue_mobile/login/login_view_model.dart';
 import 'package:jiyue_mobile/util/constants.dart';
+import 'package:provide/provide.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -10,71 +12,42 @@ class LoginPage extends StatefulWidget {
 }
 
 class LoginPageState extends State<LoginPage> {
+  final LoginViewModel _viewModel = LoginViewModel(JiYueRepository.singleton);
+
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  bool _userNameValid = false;
-  bool _passwordValid = false;
-
-  VoidCallback _onLoginPressed;
-
-  TextEditingController _userNameController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _userNameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
 
     _userNameController.addListener(() {
-      String userName = _userNameController.text;
-      if (userName.trim().isNotEmpty) {
-        _userNameValid = true;
-      } else {
-        _userNameValid = false;
-      }
-      updateLoginButtonStatus();
+      _viewModel.checkName(_userNameController.text);
     });
     _passwordController.addListener(() {
-      String password = _passwordController.text;
-      if (password.isNotEmpty && password.length > 5) {
-        _passwordValid = true;
-      } else {
-        _passwordValid = false;
-      }
-      updateLoginButtonStatus();
-    });
-  }
-
-  void updateLoginButtonStatus() {
-    debugPrint(
-        "userName:${_userNameController.text},password:${_passwordController.text}");
-    setState(() {
-      if (_userNameValid && _passwordValid) {
-        _onLoginPressed = () {
-          _login();
-        };
-      } else {
-        _onLoginPressed = null;
-      }
+      _viewModel.checkPassword(_passwordController.text);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      resizeToAvoidBottomPadding: false,
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(
-          "登录",
-          style: TextStyle(color: Colors.white),
+    return ProviderNode(
+      providers: Providers()
+        ..provide(Provider.function((context) => _viewModel)),
+      child: Scaffold(
+        key: _scaffoldKey,
+        resizeToAvoidBottomPadding: false,
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text(
+            "登录",
+            style: TextStyle(color: Colors.white),
+          ),
         ),
-      ),
-      body: Center(
-          child: Stack(
-        alignment: AlignmentDirectional.center,
-        children: <Widget>[
-          Column(
+        body: Center(
+          child: Column(
             children: <Widget>[
               Padding(
                 padding: EdgeInsets.only(top: 32.0, bottom: 16.0),
@@ -131,15 +104,23 @@ class LoginPageState extends State<LoginPage> {
                       child: Row(
                         children: <Widget>[
                           Expanded(
-                            child: RaisedButton(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 16.0),
-                              color: Theme.of(context).accentColor,
-                              textColor: Colors.white,
-                              child: Text(Constants.login),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(4.0)),
-                              onPressed: _onLoginPressed,
+                            child: Provide<LoginViewModel>(
+                              builder: (context, child, viewModel) {
+                                return RaisedButton(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 16.0),
+                                  color: Theme.of(context).accentColor,
+                                  textColor: Colors.white,
+                                  child: Text(Constants.login),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(4.0)),
+                                  onPressed: viewModel.isValid
+                                      ? () {
+                                          _login();
+                                        }
+                                      : null,
+                                );
+                              },
                             ),
                           ),
                         ],
@@ -149,21 +130,13 @@ class LoginPageState extends State<LoginPage> {
                 ),
               ),
             ],
-          )
-        ],
-      )),
+          ),
+        ),
+      ),
     );
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-
-    _userNameController.dispose();
-    _passwordController.dispose();
-  }
-
-  setLoadingIndicator(bool isActive) {
+  _setLoadingIndicator(bool isActive) {
     if (isActive) {
       showDialog(
           context: this.context,
@@ -191,9 +164,9 @@ class LoginPageState extends State<LoginPage> {
   }
 
   void _login() {
-    setLoadingIndicator(true);
+    _setLoadingIndicator(true);
 
-    JiYueRepository.singleton
+    _viewModel
         .login(_userNameController.text, _passwordController.text)
         .then((loginStatus) {
       _scaffoldKey.currentState.showSnackBar(SnackBar(
@@ -208,7 +181,7 @@ class LoginPageState extends State<LoginPage> {
     }).catchError((e) {
       debugPrint(e.toString());
     }).whenComplete(() {
-      setLoadingIndicator(false);
+      _setLoadingIndicator(false);
     });
   }
 }

@@ -47,5 +47,11 @@ class Constants {
   static final String stopped = "stoped";
   static final String reboot = "reboot";
   static final String playMode = "playmod";
+
+  //随机播放
+  static final String random = "random";
+
+  //顺序播放
+  static final String sequence = "sequence";
   static final String playState = "playstate";
 }

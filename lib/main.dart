@@ -10,6 +10,7 @@ class JiYue extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: true,
       title: Constants.appTitle,
       theme: ThemeData(primarySwatch: Colors.orange),
       routes: <String, WidgetBuilder>{
