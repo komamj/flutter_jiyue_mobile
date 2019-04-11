@@ -39,14 +39,13 @@ class NowPlayingViewModel with ChangeNotifier {
 
   bool get isShuffle => _isShuffle;
 
-  NowPlayingViewModel(this._repository) {
-    bind();
-  }
+  NowPlayingViewModel(this._repository);
 
-  bind() {
+  bindMusicBox() {
     _channel = IOWebSocketChannel.connect(Constants.aLiWebSocketEndpoint);
     _repository.getString(Constants.keyUserId).then((userId) {
-      _channel.sink.add(json.encode(Command(userId, Constants.bind, null)));
+      _channel.sink.add(json
+          .encode(Command(userId: userId, action: Constants.bind, data: null)));
       _channel.stream.listen((message) {
         PlayState playState = PlayState.fromJson(json.decode(message));
         _handlePlayState(playState);
@@ -59,10 +58,10 @@ class NowPlayingViewModel with ChangeNotifier {
   }
 
   void _handlePlayState(PlayState playState) {
+    LogUtils.singleton.d("_handlePlayState playState:${playState.toString()}");
     if (playState.code != 0) {
       return;
     }
-
     if (playState.action == Constants.status) {
       String playStatus = playState.data;
       if (playStatus == Constants.playing) {
@@ -100,6 +99,7 @@ class NowPlayingViewModel with ChangeNotifier {
     }).then((storeSongs) {
       _playlist.clear();
       _playlist.addAll(storeSongs);
+      bindMusicBox();
       notifyListeners();
     }).catchError((error) {
       LogUtils.singleton.d("_loadPlaylist erorr:${error.toString()}");
@@ -107,9 +107,12 @@ class NowPlayingViewModel with ChangeNotifier {
   }
 
   void _loadNowPlayingSong(String nowPlayingId) {
+    LogUtils.singleton.d("_loadNowPlayingSong nowPlayingId:$nowPlayingId");
     _playlist.forEach((storeSong) {
       if (storeSong.contentId == nowPlayingId) {
         _nowPlayingSong = storeSong;
+        LogUtils.singleton.d(
+            "_loadNowPlayingSong nowPlayingSong:${_nowPlayingSong.toString()}");
         notifyListeners();
       }
     });
@@ -121,27 +124,31 @@ class NowPlayingViewModel with ChangeNotifier {
 
   void next() {
     _repository.getString(Constants.keyUserId).then((userId) {
-      _sendCommand(Command(userId, Constants.next, null));
+      _sendCommand(Command(userId: userId, action: Constants.next, data: null));
     });
   }
 
   void playOrPause() {
     _repository.getString(Constants.keyUserId).then((userId) {
-      _sendCommand(
-          Command(userId, _isPlaying ? Constants.pause : Constants.play, null));
+      _sendCommand(Command(
+          userId: userId,
+          action: _isPlaying ? Constants.pause : Constants.play,
+          data: null));
     });
   }
 
   void shuffle() {
     _repository.getString(Constants.keyUserId).then((userId) {
-      _sendCommand(Command(userId, Constants.playMode,
-          _isShuffle ? Constants.sequence : Constants.random));
+      _sendCommand(Command(
+          userId: userId,
+          action: Constants.playMode,
+          data: _isShuffle ? Constants.sequence : Constants.random));
     });
   }
 
   void stop() {
     _repository.getString(Constants.keyUserId).then((userId) {
-      _sendCommand(Command(userId, Constants.stop, null));
+      _sendCommand(Command(userId: userId, action: Constants.stop, data: null));
     }).whenComplete(() {
       notifyListeners();
     });

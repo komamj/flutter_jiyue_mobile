@@ -6,18 +6,20 @@ class User {
   final String address;
   final bool online;
 
-  User(this.id, this.ownerId, this.name, this.logo, this.address, this.online);
+  User(
+      {this.id, this.ownerId, this.name, this.logo, this.address, this.online});
 
-  User.fromJson(Map<String, dynamic> json)
-      : id = json['id'],
-        ownerId = json['ownerId'],
-        name = json['name'],
-        logo = json['logo'],
-        address = json['address'],
-        online=json['online'];
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+        id: json['id'],
+        ownerId: json['ownerId'],
+        name: json['name'],
+        logo: json['logo'],
+        address: json['address'],
+        online: json['online']);
+  }
 
-  Map<String, dynamic> toJson() =>
-      <String, dynamic>{
+  Map<String, dynamic> toJson() => <String, dynamic>{
         'id': id,
         'ownerId': ownerId,
         'name': name,

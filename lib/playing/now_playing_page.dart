@@ -21,7 +21,12 @@ class NowPlayingPage extends StatelessWidget {
         ..provide(Provider.function(
             (context) => NowPlayingViewModel(JiYueRepository.singleton))),
       child: Column(
-        children: <Widget>[NowPlaying(), Expanded(child: Playlist())],
+        children: <Widget>[
+          NowPlaying(),
+          Expanded(
+            child: Playlist(),
+          )
+        ],
       ),
     );
   }

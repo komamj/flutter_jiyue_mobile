@@ -11,9 +11,8 @@ class StoreSong extends Song {
   final String userId;
 
   StoreSong(
-      String songId,
+      {String songId,
       String name,
-      String title,
       int duration,
       String albumId,
       String albumName,
@@ -21,15 +20,29 @@ class StoreSong extends Song {
       String artistName,
       this.demandId,
       this.contentId,
-      this.userId)
-      : super(songId, name, title, duration, albumId, albumName, artistId,
-            artistName);
+      this.userId})
+      : super(
+            songId: songId,
+            name: name,
+            duration: duration,
+            albumId: albumId,
+            albumName: albumName,
+            artistId: artistId,
+            artistName: artistName);
 
-  StoreSong.fromJson(Map<String, dynamic> json)
-      : demandId = json['demandId'],
-        contentId = json['id'],
-        userId = json['userId'],
-        super.fromJson(json);
+  factory StoreSong.fromJson(Map<String, dynamic> json) {
+    return StoreSong(
+        songId: json['mediaId'],
+        name: json['mediaName'],
+        duration: json['mediaInterval'],
+        albumId: json['albumId'],
+        albumName: json['albumName'],
+        artistId: json['artistId'],
+        artistName: json['artistName'],
+        demandId: json['demandId'],
+        contentId: json['id'],
+        userId: json['userId']);
+  }
 
   @override
   String toString() {

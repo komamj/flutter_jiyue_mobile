@@ -2,7 +2,6 @@ import 'dart:core';
 
 import 'package:flutter/material.dart';
 import 'package:jiyue_mobile/data/source/repository.dart';
-import 'package:jiyue_mobile/util/log_utlis.dart';
 
 class LoginViewModel with ChangeNotifier {
   final JiYueRepository _repository;

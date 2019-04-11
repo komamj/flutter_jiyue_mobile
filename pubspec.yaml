@@ -12,7 +12,7 @@ dependencies:
 
   cupertino_icons: 0.1.2
 
-  dio: 2.0.20
+  dio: 2.1.0
   web_socket_channel: 1.0.9
 
   shared_preferences: 0.5.1+1

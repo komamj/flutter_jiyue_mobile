@@ -3,12 +3,12 @@ class Command {
   final String action;
   final String data;
 
-  Command(this.userId, this.action, this.data);
+  Command({this.userId, this.action, this.data});
 
-  Command.fromJson(Map<String, dynamic> json)
-      : userId = json['store'],
-        action = json['action'],
-        data = json['data'];
+  factory Command.fromJson(Map<String, dynamic> json) {
+    return Command(
+        userId: json['store'], action: json['action'], data: json['data']);
+  }
 
   Map<String, dynamic> toJson() => {
         'store': userId,
