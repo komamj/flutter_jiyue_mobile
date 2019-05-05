@@ -8,11 +8,11 @@ import 'package:provide/provide.dart';
 class Playlist extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return PlaylistState();
+    return _PlaylistState();
   }
 }
 
-class PlaylistState extends State<Playlist> with WidgetsBindingObserver {
+class _PlaylistState extends State<Playlist> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
@@ -29,8 +29,8 @@ class PlaylistState extends State<Playlist> with WidgetsBindingObserver {
       child: Provide<NowPlayingViewModel>(
         builder: (context, child, viewModel) {
           return ListView.separated(
-            separatorBuilder: (BuildContext context, int index) => Divider(),
-            itemBuilder: (BuildContext context, int position) {
+            separatorBuilder: (context, index) => Divider(),
+            itemBuilder: (context, position) {
               return ListTile(
                 leading: FadeInImage(
                   fit: BoxFit.cover,
@@ -38,11 +38,19 @@ class PlaylistState extends State<Playlist> with WidgetsBindingObserver {
                   height: 55,
                   placeholder: AssetImage("images/ic_launcher.png"),
                   image: NetworkImage(
-                    "${Constants.aLiEndpoint}api/v1/openmusic/album/${viewModel.playlist[position].albumId}/pic",
+                    "${Constants.baseUrl}openmusic/album/${viewModel.playlist[position].albumId}/pic",
                   ),
                 ),
-                title: Text(viewModel.playlist[position].name),
-                subtitle: Text(viewModel.playlist[position].artistName),
+                title: Text(
+                  viewModel.playlist[position].name,
+                  textAlign: TextAlign.start,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                subtitle: Text(
+                  viewModel.playlist[position].artistName,
+                  textAlign: TextAlign.start,
+                  overflow: TextOverflow.ellipsis,
+                ),
               );
             },
             itemCount:

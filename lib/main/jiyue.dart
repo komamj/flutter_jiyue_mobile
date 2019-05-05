@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:jiyue_mobile/home/home_page.dart';
 import 'package:jiyue_mobile/mine/mine_page.dart';
@@ -5,11 +7,7 @@ import 'package:jiyue_mobile/playing/now_playing_page.dart';
 import 'package:jiyue_mobile/search/search_delegate.dart';
 import 'package:jiyue_mobile/util/constants.dart';
 
-void main() => runApp(MainPage());
-
 class MainPage extends StatefulWidget {
-  MainPage({Key key}) : super(key: key);
-
   @override
   State<StatefulWidget> createState() {
     return MainPageState();
@@ -34,7 +32,7 @@ class MainPageState extends State<MainPage> {
           key: _scaffoldKey,
           appBar: AppBar(
             centerTitle: true,
-            title: const Text(Constants.appTitle),
+            title: _getTitle(),
             actions: <Widget>[
               IconButton(
                 icon: const Icon(Icons.search),
@@ -74,6 +72,18 @@ class MainPageState extends State<MainPage> {
           }
           return true;
         });
+  }
+
+  _getTitle() {
+    String title = Constants.appTitle;
+    if (_currentIndex == 0) {
+      title = "首页";
+    } else if (_currentIndex == 1) {
+      title = "正在播放";
+    } else if (_currentIndex == 2) {
+      title = "我的";
+    }
+    return Text(title);
   }
 
   _onTap(int index) {

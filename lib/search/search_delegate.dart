@@ -75,11 +75,19 @@ class JiYueSearchDelegate extends SearchDelegate<String> {
                               height: 55,
                               placeholder: AssetImage("images/ic_launcher.png"),
                               image: NetworkImage(
-                                "${Constants.aLiEndpoint}api/v1/openmusic/album/${song.albumId}/pic",
+                                "${Constants.baseUrl}openmusic/album/${song.albumId}/pic",
                               ),
                             ),
-                            title: Text(song.name),
-                            subtitle: Text(song.artistName),
+                            title: Text(
+                              song.name,
+                              textAlign: TextAlign.start,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            subtitle: Text(
+                              song.artistName,
+                              textAlign: TextAlign.start,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                             trailing: PopupMenuButton<String>(
                               padding: EdgeInsets.zero,
                               icon: const Icon(Icons.more_vert),

@@ -2,7 +2,27 @@ import 'dart:core';
 
 ///排行榜
 class RankingList {
-  final String id;
+  final int groupId;
+  final String groupName;
+  final String groupTitle;
+
+  final List<Item> items;
+
+  RankingList({this.groupId, this.groupName, this.groupTitle, this.items});
+
+  factory RankingList.fromJson(Map<String, dynamic> json) {
+    List<Item> items =
+        (json['items'] as List).map((item) => Item.fromJson(item)).toList();
+    return RankingList(
+        groupId: json['id'] as int,
+        groupName: json['name'] as String,
+        groupTitle: json['title'] as String,
+        items: items);
+  }
+}
+
+class Item {
+  final int id;
   final String key;
   final String name;
   final String date;
@@ -11,7 +31,7 @@ class RankingList {
 
   final List<PreItem> preItems;
 
-  RankingList(
+  Item(
       {this.id,
       this.key,
       this.name,
@@ -20,16 +40,17 @@ class RankingList {
       this.coverUrl,
       this.preItems});
 
-  factory RankingList.fromJson(Map<String, dynamic> json) {
+  factory Item.fromJson(Map<String, dynamic> json) {
     List<PreItem> preItems = (json['preItems'] as List)
         .map((preItem) => PreItem.fromJson(preItem))
         .toList();
-    return RankingList(
-        id: json['id'],
-        key: json['key'],
-        name: json['name'],
-        date: json['date'],
-        title: json['title'],
+    return Item(
+        id: json['id'] as int,
+        key: json['key'] as String,
+        name: json['name'] as String,
+        date: json['date'] as String,
+        title: json['title'] as String,
+        coverUrl: json['coverImage'] as String,
         preItems: preItems);
   }
 }
@@ -41,6 +62,8 @@ class PreItem {
   PreItem({this.title, this.artistName});
 
   factory PreItem.fromJson(Map<String, dynamic> json) {
-    return PreItem(title: json['mediaName'], artistName: json['artistName']);
+    return PreItem(
+        title: json['mediaName'] as String,
+        artistName: json['artistName'] as String);
   }
 }

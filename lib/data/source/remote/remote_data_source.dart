@@ -199,8 +199,8 @@ class RemoteDataSource {
     Response response = await _client.get("openmusic/toplist");
     if (response.statusCode == HttpStatus.ok) {
       if (response.data['code'] == 0) {
-        List<dynamic> result = await response.data['data']['items'];
-        result.forEach((f) {
+        List<dynamic> data = await response.data['data'];
+        data.forEach((f) {
           rankingLists.add(RankingList.fromJson(f));
         });
       }
@@ -210,7 +210,7 @@ class RemoteDataSource {
 
   ///获取指定排行榜详情
   Future<List<Song>> getRankingListDetail(
-      String id, String key, String date, int pageNumber, int pageSize) async {
+      int id, String key, String date, int pageNumber, int pageSize) async {
     List songs = List<Song>();
     Response response = await _client.get("openmusic/toplist/$id",
         queryParameters: {'k': key, 'd': date, 'p': pageNumber, 'n': pageSize});
@@ -274,6 +274,13 @@ class RemoteDataSource {
   ///获取所有歌单
   Future<List<Favorite>> getFavoriteList(String sortOrder) async {
     List favorites = List<Favorite>();
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    //add headers
+    _client.options.headers = {
+      "Authorization": "Bearer ${prefs.getString(Constants.keyAccessToken)}"
+    };
+
     Response response =
         await _client.get("favorites/my", queryParameters: {'sort': sortOrder});
     if (response.statusCode == HttpStatus.ok) {

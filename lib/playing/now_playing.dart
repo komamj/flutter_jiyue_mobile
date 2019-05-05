@@ -66,7 +66,7 @@ class NowPlayingState extends State<NowPlaying>
                         backgroundImage: viewModel.nowPlayingSong == null
                             ? AssetImage("images/ic_launcher.png")
                             : NetworkImage(
-                                "${Constants.aLiEndpoint}api/v1/openmusic/album/${viewModel.nowPlayingSong.albumId}/pic"),
+                                "${Constants.baseUrl}openmusic/album/${viewModel.nowPlayingSong.albumId}/pic"),
                         radius: 72,
                       ),
                     );

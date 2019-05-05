@@ -6,7 +6,6 @@ class Favorite {
   final String coverUrl;
   final int count;
   final String createTime;
-  final String modifyTime;
 
   Favorite(
       {this.id,
@@ -15,18 +14,16 @@ class Favorite {
       this.userId,
       this.coverUrl,
       this.count,
-      this.createTime,
-      this.modifyTime});
+      this.createTime});
 
   factory Favorite.fromJson(Map<String, dynamic> json) {
     return Favorite(
-        id: json['id'],
-        name: json['name'],
-        isDefault: json['def'],
-        userId: json['userId'],
-        coverUrl: json['coverImage'],
-        count: json['itemCount'],
-        createTime: json['createDate'],
-        modifyTime: json['modifyDate']);
+        id: json['id'] as String,
+        name: json['name'] as String,
+        isDefault: json['def'] as bool,
+        userId: json['userId'] as String,
+        coverUrl: json['coverImage'] as String,
+        count: json['itemCount'] as int,
+        createTime: json['createDate'] as String);
   }
 }

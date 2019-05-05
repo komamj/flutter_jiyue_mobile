@@ -7,11 +7,11 @@ import 'package:provide/provide.dart';
 class LoginPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return LoginPageState();
+    return _LoginPageState();
   }
 }
 
-class LoginPageState extends State<LoginPage> {
+class _LoginPageState extends State<LoginPage> {
   final LoginViewModel _viewModel = LoginViewModel(JiYueRepository.singleton);
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();

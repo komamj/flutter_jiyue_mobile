@@ -58,7 +58,6 @@ class NowPlayingViewModel with ChangeNotifier {
   }
 
   void _handlePlayState(PlayState playState) {
-    LogUtils.singleton.d("_handlePlayState playState:${playState.toString()}");
     if (playState.code != 0) {
       return;
     }
@@ -107,7 +106,6 @@ class NowPlayingViewModel with ChangeNotifier {
   }
 
   void _loadNowPlayingSong(String nowPlayingId) {
-    LogUtils.singleton.d("_loadNowPlayingSong nowPlayingId:$nowPlayingId");
     _playlist.forEach((storeSong) {
       if (storeSong.contentId == nowPlayingId) {
         _nowPlayingSong = storeSong;

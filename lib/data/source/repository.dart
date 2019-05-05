@@ -85,7 +85,7 @@ class JiYueRepository {
 
   ///获取指定排行榜详情
   Future<List<Song>> getRankingListDetail(
-      String id, String key, String date, int page) async {
+      int id, String key, String date, int page) async {
     return _remoteDataSource.getRankingListDetail(
         id, key, date, page, _pageSize);
   }
