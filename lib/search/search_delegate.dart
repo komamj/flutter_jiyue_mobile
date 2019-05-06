@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:jiyue_mobile/data/enities/song.dart';
 import 'package:jiyue_mobile/data/source/repository.dart';
-import 'package:jiyue_mobile/util/constants.dart';
+import 'package:jiyue_mobile/widget/item_song.dart';
 
-class JiYueSearchDelegate extends SearchDelegate<String> {
+class SearchPage extends SearchDelegate<String> {
   final List<String> singers = ["黄家驹", "谭咏麟", "张国荣", "邓紫棋", "周杰伦"];
 
   @override
@@ -63,60 +63,18 @@ class JiYueSearchDelegate extends SearchDelegate<String> {
                 return Column(
                   children: <Widget>[
                     Expanded(
-                      child: ListView.separated(
-                        separatorBuilder: (BuildContext context, int index) =>
-                            const Divider(),
-                        itemBuilder: (BuildContext context, int position) {
-                          final Song song = snapshot.data[position];
-                          return ListTile(
-                            leading: FadeInImage(
-                              fit: BoxFit.cover,
-                              width: 55,
-                              height: 55,
-                              placeholder: AssetImage("images/ic_launcher.png"),
-                              image: NetworkImage(
-                                "${Constants.baseUrl}openmusic/album/${song.albumId}/pic",
-                              ),
-                            ),
-                            title: Text(
-                              song.name,
-                              textAlign: TextAlign.start,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            subtitle: Text(
-                              song.artistName,
-                              textAlign: TextAlign.start,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            trailing: PopupMenuButton<String>(
-                              padding: EdgeInsets.zero,
-                              icon: const Icon(Icons.more_vert),
-                              onSelected: (item) {
-                                _onPopMenuClick(item, song);
-                              },
-                              itemBuilder: (BuildContext context) =>
-                                  <PopupMenuEntry<String>>[
-                                    PopupMenuItem<String>(
-                                      value: '',
-                                      child: const ListTile(
-                                        leading: Icon(Icons.playlist_add),
-                                        title: Text('点播'),
-                                      ),
-                                    ),
-                                    PopupMenuItem<String>(
-                                      value: '',
-                                      child: const ListTile(
-                                        leading: Icon(Icons.favorite),
-                                        title: Text('收藏'),
-                                      ),
-                                    )
-                                  ],
-                            ),
-                          );
-                        },
-                        itemCount: snapshot.data.length <= 0
-                            ? 0
-                            : snapshot.data.length,
+                      child: Scrollbar(
+                        child: ListView.separated(
+                          separatorBuilder: (BuildContext context, int index) =>
+                              const Divider(),
+                          itemBuilder: (BuildContext context, int position) {
+                            final Song song = snapshot.data[position];
+                            return ItemSong(song);
+                          },
+                          itemCount: snapshot.data.length <= 0
+                              ? 0
+                              : snapshot.data.length,
+                        ),
                       ),
                     ),
                   ],
@@ -125,8 +83,6 @@ class JiYueSearchDelegate extends SearchDelegate<String> {
           }
         });
   }
-
-  void _onPopMenuClick(String item, Song song) {}
 
   @override
   Widget buildSuggestions(BuildContext context) {

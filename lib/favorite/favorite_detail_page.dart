@@ -2,26 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:jiyue_mobile/data/enities/favorite.dart';
 import 'package:jiyue_mobile/data/enities/song.dart';
 import 'package:jiyue_mobile/data/source/repository.dart';
-import 'package:jiyue_mobile/util/constants.dart';
 import 'package:jiyue_mobile/widget/item_song.dart';
 
 class FavoriteDetail extends StatefulWidget {
-  final Favorite _favorite;
+  final Favorite favorite;
 
-  FavoriteDetail(this._favorite);
+  FavoriteDetail({Key key, this.favorite}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
-    return _FavoriteDetailState(_favorite);
+    return _FavoriteDetailState(favorite: favorite);
   }
 }
 
 class _FavoriteDetailState extends State<FavoriteDetail> {
-  final Favorite _favorite;
+  final Favorite favorite;
 
-  final List<Song> songs = List<Song>();
+  final List<Song> _songs = List<Song>();
 
-  _FavoriteDetailState(this._favorite);
+  _FavoriteDetailState({this.favorite});
 
   @override
   void initState() {
@@ -32,11 +31,11 @@ class _FavoriteDetailState extends State<FavoriteDetail> {
 
   _loadSongs() {
     JiYueRepository.singleton
-        .getFavoriteSongsByFavoriteId(_favorite.id)
+        .getFavoriteSongsByFavoriteId(favorite.id)
         .then((songs) {
       setState(() {
-        this.songs.clear();
-        this.songs.addAll(songs);
+        this._songs.clear();
+        this._songs.addAll(songs);
       });
     });
   }
@@ -45,16 +44,19 @@ class _FavoriteDetailState extends State<FavoriteDetail> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_favorite.name),
+        title: Text(favorite.name),
       ),
-      body: ListView.separated(
+      body: Scrollbar(
+        child: ListView.separated(
           itemBuilder: (context, position) {
-            return ItemSong(songs[position]);
+            return ItemSong(_songs[position]);
           },
           separatorBuilder: (context, position) {
             return Divider();
           },
-          itemCount: songs.length),
+          itemCount: _songs.length,
+        ),
+      ),
     );
   }
 }

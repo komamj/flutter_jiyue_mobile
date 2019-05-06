@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:jiyue_mobile/data/enities/song.dart';
+import 'package:jiyue_mobile/data/source/repository.dart';
+import 'package:jiyue_mobile/favorite/my_favorite.dart';
 import 'package:jiyue_mobile/util/constants.dart';
+import 'package:jiyue_mobile/util/log_utlis.dart';
 
 class ItemSong extends StatefulWidget {
   final Song _song;
@@ -14,6 +17,9 @@ class ItemSong extends StatefulWidget {
 }
 
 class _ItemSongState extends State<ItemSong> {
+  static const String playlist = "addToPlaylist";
+  static const String favorite = "favorite";
+
   final Song _song;
 
   _ItemSongState(this._song);
@@ -48,14 +54,14 @@ class _ItemSongState extends State<ItemSong> {
         },
         itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
               PopupMenuItem<String>(
-                value: 'addToPlaylist',
+                value: playlist,
                 child: const ListTile(
                   leading: Icon(Icons.playlist_add),
                   title: Text('加入播放列表'),
                 ),
               ),
               PopupMenuItem<String>(
-                value: 'favorite',
+                value: favorite,
                 child: const ListTile(
                   leading: Icon(Icons.favorite),
                   title: Text('收藏'),
@@ -66,5 +72,28 @@ class _ItemSongState extends State<ItemSong> {
     );
   }
 
-  void _onPopMenuClick(String item, Song song) {}
+  void _onPopMenuClick(String item, Song song) {
+    switch (item) {
+      case playlist:
+        _addToPlaylist(song);
+        break;
+      case favorite:
+        _addToFavorite(song);
+        break;
+      default:
+        break;
+    }
+  }
+
+  void _addToPlaylist(Song song) {
+    JiYueRepository.singleton.addToPlaylist(song).then((result) {
+      LogUtils.singleton.d("成功加入播放列表");
+    });
+  }
+
+  void _addToFavorite(Song song) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return MyFavorite(song: song);
+    }));
+  }
 }

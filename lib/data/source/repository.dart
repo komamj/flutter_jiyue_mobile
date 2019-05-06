@@ -14,7 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class JiYueRepository {
   static final JiYueRepository singleton = JiYueRepository.internal();
 
-  static const int _pageSize = 20;
+  static const int _pageSize = 300;
   static const bool _filter = true;
 
   LocalDataSource _localDataSource;

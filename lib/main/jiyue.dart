@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:jiyue_mobile/home/home_page.dart';
 import 'package:jiyue_mobile/mine/mine_page.dart';
@@ -17,7 +15,7 @@ class MainPage extends StatefulWidget {
 class MainPageState extends State<MainPage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  final JiYueSearchDelegate _delegate = JiYueSearchDelegate();
+  final SearchPage _delegate = SearchPage();
 
   final List<Widget> pages = [HomePage(), NowPlayingPage(), MinePage()];
 

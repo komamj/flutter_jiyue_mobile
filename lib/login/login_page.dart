@@ -5,6 +5,8 @@ import 'package:jiyue_mobile/util/constants.dart';
 import 'package:provide/provide.dart';
 
 class LoginPage extends StatefulWidget {
+  static const String routeName = "/login";
+
   @override
   State<StatefulWidget> createState() {
     return _LoginPageState();

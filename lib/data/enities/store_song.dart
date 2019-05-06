@@ -10,6 +10,8 @@ class StoreSong extends Song {
   //操作用户标识 ID（加入的用户）
   final String userId;
 
+  bool isPlaying = false;
+
   StoreSong(
       {String songId,
       String name,

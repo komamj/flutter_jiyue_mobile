@@ -5,6 +5,7 @@ import 'package:jiyue_mobile/data/source/repository.dart';
 import 'package:jiyue_mobile/favorite/favorite_detail_page.dart';
 import 'package:jiyue_mobile/rankinglist/ranking_list_detail_page.dart';
 import 'package:jiyue_mobile/util/log_utlis.dart';
+import 'package:jiyue_mobile/widget/loading.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -14,9 +15,14 @@ class HomePage extends StatefulWidget {
 }
 
 class HomeState extends State<HomePage> {
+  static const String modifyName = "modifyName";
+  static const String delete = "delete";
+
   final List<Favorite> _favoriteList = List<Favorite>();
 
   final List<Item> _rankingLists = List<Item>();
+
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -37,6 +43,8 @@ class HomeState extends State<HomePage> {
       });
     }).catchError((error) {
       LogUtils.singleton.d("loadFavoriteList erorr:${error.toString()}");
+    }).whenComplete(() {
+      _isLoading = false;
     });
   }
 
@@ -52,13 +60,70 @@ class HomeState extends State<HomePage> {
       });
     }).catchError((error) {
       LogUtils.singleton.d("loadRankingList erorr:${error.toString()}");
+    }).whenComplete(() {
+      _isLoading = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Column(
+      child: _getWidget(),
+    );
+  }
+
+  _createFavorite() {
+    showDialog<String>(
+        context: context,
+        builder: (context) {
+          String favoriteName;
+          return AlertDialog(
+            contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+            title: Text("新建"),
+            content: TextField(
+              autofocus: true,
+              decoration: InputDecoration(
+                hintText: '请输入歌单名字...',
+                labelText: '名称',
+              ),
+              onChanged: (value) {
+                if (value.isNotEmpty) {
+                  favoriteName = value;
+                }
+              },
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: const Text('取消'),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              FlatButton(
+                child: const Text('确定'),
+                onPressed: () {
+                  Navigator.pop(context, favoriteName);
+                },
+              ),
+            ],
+          );
+        }).then((name) {
+      if (name.isNotEmpty) {
+        JiYueRepository.singleton.createFavorite(name).then((result) {
+          if (result) {
+            _loadFavoriteList();
+          }
+          LogUtils.singleton.d("创建歌单成功。");
+        });
+      }
+    });
+  }
+
+  _getWidget() {
+    if (_isLoading) {
+      return Loading();
+    } else {
+      return Column(
         children: <Widget>[
           Padding(
             padding: EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 8),
@@ -69,23 +134,27 @@ class HomeState extends State<HomePage> {
                 ),
                 IconButton(
                   icon: Icon(Icons.add),
-                  onPressed: () {},
+                  onPressed: () {
+                    _createFavorite();
+                  },
                 )
               ],
             ),
           ),
           Container(
-            height: 120,
+            height: 128,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemBuilder: (context, position) {
                 final Favorite favorite = _favoriteList[position];
                 return InkWell(
                   onTap: () {
-                    Navigator.push(context,
-                        new MaterialPageRoute(builder: (context) {
-                      return FavoriteDetail(favorite);
-                    }));
+                    Navigator.push(
+                      context,
+                      new MaterialPageRoute(builder: (context) {
+                        return FavoriteDetail(favorite: favorite);
+                      }),
+                    );
                   },
                   child: Container(
                     width: 128,
@@ -99,14 +168,39 @@ class HomeState extends State<HomePage> {
                             height: 72,
                             fit: BoxFit.cover,
                           ),
-                          Padding(
-                            padding: EdgeInsets.only(
-                                top: 8, bottom: 8, left: 2, right: 2),
-                            child: Text(
-                              _favoriteList[position].name,
-                              textAlign: TextAlign.center,
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                          Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: Padding(
+                                  padding: EdgeInsets.only(left: 6),
+                                  child: Text(
+                                    _favoriteList[position].name,
+                                    textAlign: TextAlign.center,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ),
+                              PopupMenuButton<String>(
+                                padding: EdgeInsets.zero,
+                                icon: const Icon(
+                                  Icons.more_vert,
+                                ),
+                                onSelected: (item) {
+                                  _onPopMenuClick(item, favorite);
+                                },
+                                itemBuilder: (BuildContext context) =>
+                                    <PopupMenuEntry<String>>[
+                                      PopupMenuItem<String>(
+                                        value: modifyName,
+                                        child: const Text('重命名'),
+                                      ),
+                                      PopupMenuItem<String>(
+                                        value: delete,
+                                        child: const Text('删除'),
+                                      ),
+                                    ],
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -126,14 +220,15 @@ class HomeState extends State<HomePage> {
             ),
           ),
           Expanded(
-            child: ListView.separated(
+            child: Scrollbar(
+              child: ListView.separated(
                 itemBuilder: (context, position) {
                   final Item rankingList = _rankingLists[position];
                   return InkWell(
                     onTap: () {
                       Navigator.push(context,
                           new MaterialPageRoute(builder: (context) {
-                        return RankingListDetail(rankingList);
+                        return RankingListDetail(rankingList: rankingList);
                       }));
                     },
                     child: Row(
@@ -180,11 +275,36 @@ class HomeState extends State<HomePage> {
                 separatorBuilder: (context, index) {
                   return Divider();
                 },
-                itemCount:
-                    _rankingLists.length <= 0 ? 0 : _rankingLists.length),
+                itemCount: _rankingLists.length <= 0 ? 0 : _rankingLists.length,
+              ),
+            ),
           ),
         ],
-      ),
-    );
+      );
+    }
+  }
+
+  void _onPopMenuClick(String item, Favorite favorite) {
+    switch (item) {
+      case modifyName:
+        break;
+      case delete:
+        _deleteFavorite(favorite);
+        break;
+      default:
+        break;
+    }
+  }
+
+  _deleteFavorite(Favorite favorite) {
+    JiYueRepository.singleton.deleteFavorite(favorite.id).then((result) {
+      if (result) {
+        setState(() {
+          _favoriteList.remove(favorite);
+        });
+
+        LogUtils.singleton.d("删除歌单成功。");
+      }
+    });
   }
 }

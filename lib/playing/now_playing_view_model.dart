@@ -20,7 +20,7 @@ class NowPlayingViewModel with ChangeNotifier {
   StoreSong get nowPlayingSong => _nowPlayingSong;
 
   //当前的播放列表
-  final List _playlist = List<StoreSong>();
+  final List<StoreSong> _playlist = List<StoreSong>();
 
   List<StoreSong> get playlist => _playlist;
 
@@ -109,9 +109,12 @@ class NowPlayingViewModel with ChangeNotifier {
     _playlist.forEach((storeSong) {
       if (storeSong.contentId == nowPlayingId) {
         _nowPlayingSong = storeSong;
+        storeSong.isPlaying = true;
         LogUtils.singleton.d(
             "_loadNowPlayingSong nowPlayingSong:${_nowPlayingSong.toString()}");
         notifyListeners();
+      } else {
+        storeSong.isPlaying = false;
       }
     });
   }

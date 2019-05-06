@@ -14,7 +14,7 @@ class JiYue extends StatelessWidget {
       title: Constants.appTitle,
       theme: ThemeData(primarySwatch: Colors.orange),
       routes: <String, WidgetBuilder>{
-        "/login": (context) => LoginPage(),
+        LoginPage.routeName: (context) => LoginPage(),
         "/main": (context) => MainPage()
       },
       home: SplashPage(),
